@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:piperchatapp/screens/home_page.dart';
+import 'package:piperchatapp/screens/signin.dart';
+import 'package:piperchatapp/screens/signup.dart';
 
 import './app_theme.dart';
 //import './screens/screen.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: SignInPage(),
     );
   }
 }
