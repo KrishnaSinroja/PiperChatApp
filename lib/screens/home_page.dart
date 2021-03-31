@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           icon: Icon(Icons.menu),
         ),
         title: Text(
-          'Chattie',
+          'Piper Chat',
           style: MyTheme.kAppTitle,
         ),
         actions: [
