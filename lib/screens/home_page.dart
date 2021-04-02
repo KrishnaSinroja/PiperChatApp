@@ -1,3 +1,6 @@
+import 'package:signalr_client/hub_connection.dart';
+import 'package:signalr_client/hub_connection_builder.dart';
+
 import '../app_theme.dart';
 import 'package:flutter/material.dart';
 import '../widgets/widgets.dart';
@@ -11,6 +14,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   TabController tabController;
   int currentTabIndex = 0;
+  //final serverUrl = "http://10.0.2.2:5000/chatHub";
+  final serverUrl = "http://192.168.43.99:5000/chatHub";
+  HubConnection hubConnection;
 
   void onTabChange() {
     setState(() {
@@ -27,6 +33,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       onTabChange();
     });
     super.initState();
+    initSignalR();
+  }
+
+  void initSignalR() async{
+    hubConnection = HubConnectionBuilder().withUrl(serverUrl).build();
+    hubConnection.onclose((error) => print("Connection closed"));
+    hubConnection.on("ReceiveMessage", _messageReceived);
+    await hubConnection.start();
+  }
+
+  _messageReceived(List<Object> args){
+    print(args[0]);
   }
 
   @override
@@ -86,7 +104,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async{
+          
+          // await hubConnection.start();
+          if(hubConnection.state == HubConnectionState.Connected){
+            await hubConnection.invoke("SendMessageToServer",args:<Object>["hello"]);
+          }
+        },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
