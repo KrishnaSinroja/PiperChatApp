@@ -49,7 +49,7 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   _receiveMessage(List<Object> args) {
-    print(args[0]);
+    print("Received "+args[0]);
     Message message = Message.fromJson(jsonDecode(args[0]));
     message.text = RSA.decrypt(message.text, privateKey);
     message.simpleText = message.text;
