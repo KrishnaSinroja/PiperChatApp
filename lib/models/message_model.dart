@@ -77,7 +77,7 @@ List<Message> recentChats = [
       unreadCount: 2),
 ];
 
-final List<Message> allChats = [
+List<Message> allChats = [
   Message(
     sender: virgil,
     avatar: 'assets/images/Virgil.jpg',

@@ -37,10 +37,10 @@ Container buildChatComposer({TextEditingController messageController, Function s
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.attach_file,
-                  color: Colors.grey[500],
-                )
+                // Icon(
+                //   Icons.attach_file,
+                //   color: Colors.grey[500],
+                // )
               ],
             ),
           ),

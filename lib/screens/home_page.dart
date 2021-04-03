@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:piperchatapp/models/message_model.dart';
 import 'package:piperchatapp/models/user_model.dart';
+import 'package:piperchatapp/screens/all_chat_page.dart';
 import 'package:piperchatapp/utils/utils.dart';
 import 'package:signalr_client/hub_connection.dart';
 import 'package:signalr_client/hub_connection_builder.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import '../widgets/widgets.dart';
 import '../screens/screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   @override
@@ -37,7 +39,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
 
     tabController.addListener(() {
       onTabChange();
@@ -59,7 +61,7 @@ class _HomePageState extends State<HomePage>
       );
       return;
     }
-    if(state == AppLifecycleState.resumed){
+    if (state == AppLifecycleState.resumed) {
       await _userOnline();
       return;
     }
@@ -79,14 +81,15 @@ class _HomePageState extends State<HomePage>
     await _userOnline();
   }
 
-  _userOnline() async{
-     await hubConnection.invoke(
+  _userOnline() async {
+    await hubConnection.invoke(
       "UserConnected",
       args: <Object>[
         jsonEncode(_currentUser.toJosn()),
       ],
     );
   }
+
   _setClientMethods() {
     hubConnection.onclose((error) => print("Connection closed"));
     hubConnection.on("ReceiveMessage", _messageReceived);
@@ -95,20 +98,22 @@ class _HomePageState extends State<HomePage>
     hubConnection.on("NotifyToOthersDisconnect", _notifyToOthersDisconnect);
   }
 
-  _notifyToOthersDisconnect(List<Object> args){
+  _notifyToOthersDisconnect(List<Object> args) {
     User newUser = User.fromJson(jsonDecode(args[0]));
-    recentChats.removeWhere((message) => message.sender.chatUserId == newUser.chatUserId);
+    recentChats.removeWhere(
+        (message) => message.sender.chatUserId == newUser.chatUserId);
     userMessages.remove(newUser.chatUserId);
-    setState(() {
-    });
+    setState(() {});
   }
 
   _notifyToOthers(List<Object> args) {
     User newUser = User.fromJson(jsonDecode(args[0]));
-    recentChats.firstWhere((message) => message.sender.chatUserId == newUser.chatUserId,orElse: (){
+    recentChats.firstWhere(
+        (message) => message.sender.chatUserId == newUser.chatUserId,
+        orElse: () {
       return;
     });
-      
+
     userMessages[newUser.chatUserId] = [];
     Message message = new Message(
       sender: newUser,
@@ -162,71 +167,104 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
+  Future<List<Message>> _getAllUsers() async {
+    List<Message> allUsers = [];
+    allUsers.addAll(allChats);
+
+    var response = await http.get(Utils.BASE_URL+"/api/user");
+    if(response.statusCode == 200){
+      var json = jsonDecode(response.body);
+      for(var row in json){
+        User tempUser = User.fromUserJson(row);
+        Message message = new Message(sender: tempUser, avatar: tempUser.avatar);
+        allUsers.add(message);
+      }
+    }
+    return allUsers;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.menu),
-        ),
-        title: Text(
-          'Piper Chat',
-          style: MyTheme.kAppTitle,
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.camera_alt),
-            onPressed: () {},
-          )
-        ],
-        elevation: 0,
-      ),
-      backgroundColor: MyTheme.kPrimaryColor,
-      body: Column(
-        children: [
-          MyTabBar(tabController: tabController),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  )),
-              child: TabBarView(
-                controller: tabController,
-                children: [
-                  ChatPage(userMessages: userMessages,hubConnection: hubConnection,),
-                  Center(child: Text('Status')),
-                  Center(child: Text('Call')),
-                ],
-              ),
+        appBar: AppBar(
+          // leading: IconButton(
+          //   onPressed: () {},
+          //   icon: Icon(Icons.menu),
+          // ),
+          automaticallyImplyLeading: false,
+          title: Align(
+            alignment: Alignment.center,
+            child: Text(
+              'Piper Chat',
+              style: MyTheme.kAppTitle,
             ),
-          )
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // await hubConnection.start();
-          if (hubConnection.state == HubConnectionState.Connected) {
-            await hubConnection
-                .invoke("SendMessageToServer", args: <Object>["hello"]);
-          }
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          ),
+          actions: [
+            // IconButton(
+            //   icon: Icon(Icons.camera_alt),
+            //   onPressed: () {},
+            // )
+          ],
+          elevation: 0,
         ),
-        child: Icon(
-          currentTabIndex == 0
-              ? Icons.message_outlined
-              : currentTabIndex == 1
-                  ? Icons.camera_alt
-                  : Icons.call,
-          color: Colors.white,
-        ),
-      ),
-    );
+        backgroundColor: MyTheme.kPrimaryColor,
+        body: Column(
+          children: [
+            MyTabBar(tabController: tabController),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    )),
+                child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    ChatPage(
+                      userMessages: userMessages,
+                      hubConnection: hubConnection,
+                    ),
+                    FutureBuilder(
+                        future: _getAllUsers(),
+                        builder: (context, snapshot) {
+                          return snapshot.hasData
+                              ? AllUserPage(
+                                  allUsers: snapshot.data as List<Message>,
+                                  hubConnection: hubConnection,
+                                )
+                              : CircularProgressIndicator();
+                        }),
+                    //Center(child: Text('Call')),
+                  ],
+                ),
+              ),
+            )
+          ],
+        )
+
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () async {
+        //     // await hubConnection.start();
+        //     if (hubConnection.state == HubConnectionState.Connected) {
+        //       await hubConnection
+        //           .invoke("SendMessageToServer", args: <Object>["hello"]);
+        //     }
+        //   },
+        //   shape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.circular(15),
+        //   ),
+        //   child: Icon(
+        //     currentTabIndex == 0
+        //         ? Icons.message_outlined
+        //         : currentTabIndex == 1
+        //             ? Icons.camera_alt
+        //             : Icons.call,
+        //     color: Colors.white,
+        //   ),
+        // ),
+        );
   }
 }

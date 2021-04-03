@@ -13,9 +13,8 @@ import 'package:piperchatapp/widgets/textformfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
 import 'package:pointycastle/api.dart' as crypto;
-import 'package:pem/pem.dart';
 import 'package:piperchatapp/app_theme.dart';
-
+import 'package:http/http.dart' as http;
 
 class SignInPage extends StatelessWidget {
   @override
@@ -32,7 +31,6 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-
   double _height;
   double _width;
   double _pixelRatio;
@@ -41,16 +39,15 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> _key = GlobalKey();
-
-
+  User user;
 
   @override
   Widget build(BuildContext context) {
-     _height = MediaQuery.of(context).size.height;
-     _width = MediaQuery.of(context).size.width;
-     _pixelRatio = MediaQuery.of(context).devicePixelRatio;
-     _large =  ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
-     _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
+    _height = MediaQuery.of(context).size.height;
+    _width = MediaQuery.of(context).size.width;
+    _pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    _large = ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
+    _medium = ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
     return Material(
       child: Container(
         height: _height,
@@ -82,7 +79,9 @@ class _SignInScreenState extends State<SignInScreen> {
           child: ClipPath(
             clipper: CustomShapeClipper(),
             child: Container(
-              height:_large? _height/4 : (_medium? _height/3.75 : _height/3.5),
+              height: _large
+                  ? _height / 4
+                  : (_medium ? _height / 3.75 : _height / 3.5),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [MyTheme.kPrimaryColor, MyTheme.kAccentColor],
@@ -96,7 +95,9 @@ class _SignInScreenState extends State<SignInScreen> {
           child: ClipPath(
             clipper: CustomShapeClipper2(),
             child: Container(
-              height: _large? _height/4.5 : (_medium? _height/4.25 : _height/4),
+              height: _large
+                  ? _height / 4.5
+                  : (_medium ? _height / 4.25 : _height / 4),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [MyTheme.kPrimaryColor, MyTheme.kAccentColor],
@@ -107,11 +108,14 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         Container(
           alignment: Alignment.bottomCenter,
-          margin: EdgeInsets.only(top: _large? _height/30 : (_medium? _height/25 : _height/20)),
+          margin: EdgeInsets.only(
+              top: _large
+                  ? _height / 30
+                  : (_medium ? _height / 25 : _height / 20)),
           child: Image.asset(
             'assets/images/login.png',
-            height: _height/3.5,
-            width: _width/3.5,
+            height: _height / 3.5,
+            width: _width / 3.5,
           ),
         ),
       ],
@@ -126,10 +130,9 @@ class _SignInScreenState extends State<SignInScreen> {
           Text(
             "Welcome",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: _large? 60 : (_medium? 50 : 40),
-              color: MyTheme.kPrimaryColor
-            ),
+                fontWeight: FontWeight.bold,
+                fontSize: _large ? 60 : (_medium ? 50 : 40),
+                color: MyTheme.kPrimaryColor),
           ),
         ],
       ),
@@ -144,10 +147,9 @@ class _SignInScreenState extends State<SignInScreen> {
           Text(
             "Sign in to your account",
             style: TextStyle(
-              fontWeight: FontWeight.w200,
-              fontSize: _large? 20 : (_medium? 17.5 : 15),
-              color: MyTheme.kAccentColor
-            ),
+                fontWeight: FontWeight.w200,
+                fontSize: _large ? 20 : (_medium ? 17.5 : 15),
+                color: MyTheme.kAccentColor),
           ),
         ],
       ),
@@ -157,9 +159,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget form() {
     return Container(
       margin: EdgeInsets.only(
-          left: _width / 12.0,
-          right: _width / 12.0,
-          top: _height / 15.0),
+          left: _width / 12.0, right: _width / 12.0, top: _height / 15.0),
       child: Form(
         key: _key,
         child: Column(
@@ -180,7 +180,6 @@ class _SignInScreenState extends State<SignInScreen> {
       icon: Icons.email,
       hint: "Email ID",
     );
-
   }
 
   Widget passwordTextFormField() {
@@ -190,9 +189,9 @@ class _SignInScreenState extends State<SignInScreen> {
       icon: Icons.lock,
       obscureText: true,
       hint: "Password",
+         
     );
   }
-
 
   Widget forgetPassTextRow() {
     return Container(
@@ -202,7 +201,9 @@ class _SignInScreenState extends State<SignInScreen> {
         children: <Widget>[
           Text(
             "Forgot your password?",
-            style: TextStyle(fontWeight: FontWeight.w400,fontSize: _large? 14: (_medium? 12: 10)),
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: _large ? 14 : (_medium ? 12 : 10)),
           ),
           SizedBox(
             width: 5,
@@ -228,48 +229,57 @@ class _SignInScreenState extends State<SignInScreen> {
     rsa.keyPair = await rsa.futureKeyPair;
     String publicKey = RSA.publicKeyString(rsa.keyPair.publicKey);
     String privateKey = RSA.privateKeyString(rsa.keyPair.privateKey);
-    String name = emailController.text;
-    String avatar = "assets/images/Deanna.jpg";
-    User user = new User(chatUserId: int.parse(passwordController.text), name: name,email: 'abc@gmail.com', avatar: avatar,password: 'abc',publicKey: publicKey);
+    user.publicKey = publicKey;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(Utils.CURRENT_USER, jsonEncode(user.toJosn()));
     prefs.setString(Utils.PRIVATE_KEY, privateKey);
- 
   }
 
-  
-  Widget button() {
-    return RaisedButton(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-      onPressed: ()async {
-          
-          await _storeUser();
+  loginUser() async {
+    User newUser = new User(
+        email: emailController.text, password: passwordController.text);
 
- 
+    var response = await http.post(
+      Utils.BASE_URL + "/api/user/login",
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(newUser.toLoginJson()),
+    );
+
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      user = new User(
+          chatUserId: json['chatUserId'],
+          name: json['name'],
+          email: json['name'],
+          password: json['password'],
+          avatar: json['avatar']);
+      await _storeUser();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    }else{
+      print('failed');
+    }
+  }
+
   Widget button() {
     return RaisedButton(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(85.0)),
-      onPressed: () {
-
-
-          Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-          );
-          print("Routing to your account");
-          Scaffold
-              .of(context)
-              .showSnackBar(SnackBar(content: Text('Login Successful')));
-
-
+      onPressed: () async {
+        await loginUser();
+        print("Routing to your account");
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text('Login Successful')));
       },
       textColor: Colors.white,
       padding: EdgeInsets.all(0.0),
       child: Container(
         alignment: Alignment.center,
-        width: _large? _width/2 : (_medium? _width/2: _width/2),
+        width: _large ? _width / 2 : (_medium ? _width / 2 : _width / 2),
         height: 55.0,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(30.0)),
@@ -278,7 +288,8 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
         padding: const EdgeInsets.all(12.0),
-        child: Text('SIGN IN',style: TextStyle(fontSize: _large? 18: (_medium? 18: 16))),
+        child: Text('SIGN IN',
+            style: TextStyle(fontSize: _large ? 18 : (_medium ? 18 : 16))),
       ),
     );
   }
@@ -291,14 +302,16 @@ class _SignInScreenState extends State<SignInScreen> {
         children: <Widget>[
           Text(
             "Don't have an account?",
-            style: TextStyle(fontWeight: FontWeight.w400,fontSize: _large? 16: (_medium? 16: 16)),
+            style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: _large ? 16 : (_medium ? 16 : 16)),
           ),
           SizedBox(
             width: 5,
           ),
           GestureDetector(
             onTap: () {
-               Navigator.push(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SignUpScreen()),
               );
@@ -307,12 +320,13 @@ class _SignInScreenState extends State<SignInScreen> {
             child: Text(
               "Sign up",
               style: TextStyle(
-                  fontWeight: FontWeight.w800, color: Colors.orange[200], fontSize: _large? 19: (_medium? 17: 15)),
+                  fontWeight: FontWeight.w800,
+                  color: Colors.orange[200],
+                  fontSize: _large ? 19 : (_medium ? 17 : 15)),
             ),
           )
         ],
       ),
     );
   }
-
 }

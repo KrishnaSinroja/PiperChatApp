@@ -29,10 +29,10 @@ class RecentChats extends StatelessWidget {
                 style: MyTheme.heading2,
               ),
               Spacer(),
-              Icon(
-                Icons.search,
-                color: MyTheme.kPrimaryColor,
-              )
+              // Icon(
+              //   Icons.search,
+              //   color: MyTheme.kPrimaryColor,
+              // )
             ],
           ),
         ),
@@ -85,17 +85,17 @@ class RecentChats extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          CircleAvatar(
-                            radius: 8,
-                            backgroundColor: MyTheme.kUnreadChatBG,
-                            child: Text(
-                              recentChat.unreadCount.toString(),
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                          // CircleAvatar(
+                          //   radius: 8,
+                          //   backgroundColor: MyTheme.kUnreadChatBG,
+                          //   child: Text(
+                          //     recentChat.unreadCount.toString(),
+                          //     style: TextStyle(
+                          //         color: Colors.white,
+                          //         fontSize: 11,
+                          //         fontWeight: FontWeight.bold),
+                          //   ),
+                          // ),
                           SizedBox(
                             height: 10,
                           ),
