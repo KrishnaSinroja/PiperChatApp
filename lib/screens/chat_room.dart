@@ -127,18 +127,18 @@ class _ChatRoomState extends State<ChatRoom> {
           ],
         ),
         actions: [
-          IconButton(
-              icon: Icon(
-                Icons.videocam_outlined,
-                size: 28,
-              ),
-              onPressed: () {}),
-          IconButton(
-              icon: Icon(
-                Icons.call,
-                size: 28,
-              ),
-              onPressed: () {})
+          // IconButton(
+          //     icon: Icon(
+          //       Icons.videocam_outlined,
+          //       size: 28,
+          //     ),
+          //     onPressed: () {}),
+          // IconButton(
+          //     icon: Icon(
+          //       Icons.call,
+          //       size: 28,
+          //     ),
+          //     onPressed: () {})
         ],
         elevation: 0,
       ),

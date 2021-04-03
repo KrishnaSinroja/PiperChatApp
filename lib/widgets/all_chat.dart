@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import '../app_theme.dart';
 
 class AllChats extends StatelessWidget {
+  final List<Message> allUsers;
+
+  AllChats(this.allUsers);
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -15,7 +18,7 @@ class AllChats extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                'All Chats',
+                'All Users',
                 style: MyTheme.heading2,
               ),
             ],
@@ -24,9 +27,9 @@ class AllChats extends StatelessWidget {
         ListView.builder(
             shrinkWrap: true,
             physics: ScrollPhysics(),
-            itemCount: allChats.length,
+            itemCount: allUsers.length,
             itemBuilder: (context, int index) {
-              final allChat = allChats[index];
+              final allChat = allUsers[index];
               return Container(
                   margin: const EdgeInsets.only(top: 20),
                   child: Row(
@@ -55,10 +58,10 @@ class AllChats extends StatelessWidget {
                                 fontSize: 16,
                               ),
                             ),
-                            Text(
-                              allChat.text,
-                              style: MyTheme.bodyText1,
-                            ),
+                            // Text(
+                            //   allChat.text,
+                            //   style: MyTheme.bodyText1,
+                            // ),
                           ],
                         ),
                       ),
@@ -66,29 +69,30 @@ class AllChats extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          allChat.unreadCount == 0
-                              ? Icon(
-                                  Icons.done_all,
+                          // allChat.unreadCount == 0
+                           //   ? 
+                              Icon(
+                                  Icons.verified_user,
                                   color: MyTheme.bodyTextTime.color,
-                                )
-                              : CircleAvatar(
-                                  radius: 8,
-                                  backgroundColor: MyTheme.kUnreadChatBG,
-                                  child: Text(
-                                    allChat.unreadCount.toString(),
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold),
-                                  ),
                                 ),
+                          //     : CircleAvatar(
+                          //         radius: 8,
+                          //         backgroundColor: MyTheme.kUnreadChatBG,
+                          //         child: Text(
+                          //           allChat.unreadCount.toString(),
+                          //           style: TextStyle(
+                          //               color: Colors.white,
+                          //               fontSize: 11,
+                          //               fontWeight: FontWeight.bold),
+                          //         ),
+                          //       ),
                           SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            allChat.time,
-                            style: MyTheme.bodyTextTime,
-                          )
+                          // Text(
+                          //   allChat.time,
+                          //   style: MyTheme.bodyTextTime,
+                          // )
                         ],
                       ),
                     ],

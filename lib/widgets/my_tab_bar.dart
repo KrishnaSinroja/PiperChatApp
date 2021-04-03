@@ -35,22 +35,22 @@ class MyTabBar extends StatelessWidget {
           ),
           Tab(
             icon: Text(
-              'Status',
+              'Users',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          Tab(
-            icon: Text(
-              'Call',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          // Tab(
+          //   icon: Text(
+          //     'Call',
+          //     style: TextStyle(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w600,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
