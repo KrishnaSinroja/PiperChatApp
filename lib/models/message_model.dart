@@ -1,13 +1,19 @@
+import 'dart:convert';
+
 import './user_model.dart';
 
 class Message {
-  final User sender;
-  final String avatar;
-  final String time;
-  final int unreadCount;
-  final bool isRead;
-  final String text;
-
+  int messageId;
+  User sender;
+  User receiver;
+  int senderId;
+  int receiverId;
+  String avatar;
+  String time;
+  int unreadCount;
+  bool isRead;
+  String text;
+  String simpleText;
   Message({
     this.sender,
     this.avatar,
@@ -15,35 +21,58 @@ class Message {
     this.unreadCount,
     this.text,
     this.isRead,
+    this.senderId,
+    this.receiverId,
+    this.simpleText
   });
+
+
+  Map<String, dynamic> toJson(){
+    return {
+      "SenderId":senderId,
+      "ReceiverId":receiverId,
+      "Message1":text,
+      "MessageTime":time,
+      "Avatar":avatar,
+      "sender":sender.toJosn()
+    };
+  }
+
+  Message.fromJson(Map<String, dynamic> json):
+     senderId = json['SenderId'],
+     receiverId = json['ReceiverId'],
+     text = json['Message1'],
+     time = json['MessageTime'],
+     avatar = json['Avatar'],
+     sender = User.fromJson(json['sender']);
 }
 
-final List<Message> recentChats = [
+List<Message> recentChats = [
   Message(
     sender: addison,
     avatar: 'assets/images/Addison.jpg',
-    time: '01:25',
+    time: DateTime.now().toIso8601String(),
     text: "typing...",
     unreadCount: 1,
   ),
   Message(
     sender: jason,
     avatar: 'assets/images/Jason.jpg',
-    time: '12:46',
+    time: DateTime.now().toIso8601String(),
     text: "Will I be in it?",
     unreadCount: 1,
   ),
   Message(
     sender: deanna,
     avatar: 'assets/images/Deanna.jpg',
-    time: '05:26',
+    time: DateTime.now().toIso8601String(),
     text: "That's so cute.",
     unreadCount: 3,
   ),
   Message(
       sender: nathan,
       avatar: 'assets/images/Nathan.jpg',
-      time: '12:45',
+      time: DateTime.now().toIso8601String(),
       text: "Let me see what I can do.",
       unreadCount: 2),
 ];

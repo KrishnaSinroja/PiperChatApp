@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:piperchatapp/models/message_model.dart';
 import '../app_theme.dart';
 
-Container buildChatComposer() {
+Container buildChatComposer({TextEditingController messageController, Function sendMessage}) {
+
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 20),
     color: Colors.white,
@@ -27,6 +29,7 @@ Container buildChatComposer() {
                 ),
                 Expanded(
                   child: TextField(
+                    controller: messageController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Type your message ...',
@@ -45,11 +48,14 @@ Container buildChatComposer() {
         SizedBox(
           width: 16,
         ),
-        CircleAvatar(
-          backgroundColor: MyTheme.kAccentColor,
-          child: Icon(
-            Icons.mic,
-            color: Colors.white,
+        GestureDetector(
+          onTap: sendMessage,
+          child: CircleAvatar(
+            backgroundColor: MyTheme.kAccentColor,
+            child: Icon(
+              Icons.send,
+              color: Colors.white,
+            ),
           ),
         )
       ],

@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import '../models/message_model.dart';
 import '../models/user_model.dart';
 import '../app_theme.dart';
@@ -7,18 +9,24 @@ class Conversation extends StatelessWidget {
   const Conversation({
     Key key,
     @required this.user,
+    this.messageList
   }) : super(key: key);
 
   final User user;
-
+  final List<Message> messageList;
   @override
   Widget build(BuildContext context) {
+    messageList.sort((a, b){
+      DateTime ad = DateTime.parse(a.time);
+      DateTime bd = DateTime.parse(b.time);
+      return bd.compareTo(ad);
+    });
     return ListView.builder(
         reverse: true,
-        itemCount: messages.length,
+        itemCount: messageList.length,
         itemBuilder: (context, int index) {
-          final message = messages[index];
-          bool isMe = message.sender.id == currentUser.id;
+          final message = messageList[index];
+          bool isMe = message.sender.chatUserId != user.chatUserId;
           return Container(
             margin: EdgeInsets.only(top: 10),
             child: Column(
@@ -31,7 +39,7 @@ class Conversation extends StatelessWidget {
                     if (!isMe)
                       CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage(user.avatar),
+                        backgroundImage: AssetImage(message.sender.avatar),
                       ),
                     SizedBox(
                       width: 10,
@@ -49,7 +57,7 @@ class Conversation extends StatelessWidget {
                             bottomRight: Radius.circular(isMe ? 0 : 12),
                           )),
                       child: Text(
-                        messages[index].text,
+                        messageList[index].simpleText,
                         style: MyTheme.bodyTextMessage.copyWith(
                             color: isMe ? Colors.white : Colors.grey[800]),
                       ),
@@ -75,7 +83,7 @@ class Conversation extends StatelessWidget {
                         width: 8,
                       ),
                       Text(
-                        message.time,
+                        DateFormat.jm().format(DateTime.parse(message.time)),
                         style: MyTheme.bodyTextTime,
                       )
                     ],

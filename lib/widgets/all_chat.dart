@@ -42,7 +42,7 @@ class AllChats extends StatelessWidget {
                         onTap: () {
                           Navigator.push(context,
                               CupertinoPageRoute(builder: (context) {
-                            return ChatRoom(user: allChat.sender);
+                            return ChatRoom(sender: allChat.sender);
                           }));
                         },
                         child: Column(
