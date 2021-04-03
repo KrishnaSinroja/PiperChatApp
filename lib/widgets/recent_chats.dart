@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import 'package:signalr_client/hub_connection.dart';
 import '../models/message_model.dart';
 import '../screens/screen.dart';
 
 import '../app_theme.dart';
 
 class RecentChats extends StatelessWidget {
+    final Map<int, List<Message>> userMessages;
+    final HubConnection hubConnection;
   const RecentChats({
     Key key,
+    this.userMessages,
+    this.hubConnection
   }) : super(key: key);
 
   @override
@@ -52,7 +58,9 @@ class RecentChats extends StatelessWidget {
                           Navigator.push(context,
                               CupertinoPageRoute(builder: (context) {
                             return ChatRoom(
-                              user: recentChat.sender,
+                              sender: recentChat.sender,
+                              messageList: userMessages[recentChat.sender.chatUserId],
+                              hubConnection: hubConnection,
                             );
                           }));
                         },
@@ -92,7 +100,7 @@ class RecentChats extends StatelessWidget {
                             height: 10,
                           ),
                           Text(
-                            recentChat.time,
+                            DateFormat.jm().format(DateTime.parse(recentChat.time)).toString(),
                             style: MyTheme.bodyTextTime,
                           )
                         ],

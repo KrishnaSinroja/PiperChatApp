@@ -1,39 +1,65 @@
 class User {
-  final int id;
-  final String name;
-  final String avatar;
+  int chatUserId;
+  String name;
+  String avatar;
+  String email;
+  String password;
+  String publicKey;
 
   User({
-    this.id,
+    this.chatUserId,
     this.name,
     this.avatar,
+    this.email,
+    this.password,
+    this.publicKey
   });
+
+  Map<String, dynamic> toJosn(){
+    return {
+      "ChatUserId":chatUserId,
+      "Name":name,
+      "Email":email,
+      "Avatar":avatar,
+      "Password":password,
+      "PublicKey":publicKey
+    };
+  }
+
+  User.fromJson(Map<String, dynamic> json):
+     chatUserId = json['ChatUserId'],
+     email = json['Email'],
+     name = json['Name'],
+     avatar = json['Avatar'],
+     password = json['Password'],
+     publicKey = json['PublicKey'];
+  
 }
 
 final User currentUser =
-    User(id: 0, name: 'You', avatar: 'assets/images/Addison.jpg');
+    User(chatUserId: 0, name: 'You', avatar: 'assets/images/Addison.jpg');
 
 final User addison =
-    User(id: 1, name: 'Addison', avatar: 'assets/images/Addison.jpg');
+    User(chatUserId: 1, name: 'Addison', avatar: 'assets/images/Addison.jpg');
 
 final User angel =
-    User(id: 2, name: 'Angel', avatar: 'assets/images/Angel.jpg');
+    User(chatUserId: 2, name: 'Angel', avatar: 'assets/images/Angel.jpg');
 
 final User deanna =
-    User(id: 3, name: 'Deanna', avatar: 'assets/images/Deanna.jpg');
+    User(chatUserId: 3, name: 'Deanna', avatar: 'assets/images/Deanna.jpg');
 
-final User jason = User(id: 4, name: 'Json', avatar: 'assets/images/Jason.jpg');
+final User jason = User(chatUserId: 4, name: 'Json', avatar: 'assets/images/Jason.jpg');
 
-final User judd = User(id: 5, name: 'Judd', avatar: 'assets/images/Judd.jpg');
+final User judd = User(chatUserId: 5, name: 'Judd', avatar: 'assets/images/Judd.jpg');
 
 final User leslie =
-    User(id: 6, name: 'Leslie', avatar: 'assets/images/Leslie.jpg');
+    User(chatUserId: 6, name: 'Leslie', avatar: 'assets/images/Leslie.jpg');
 
 final User nathan =
-    User(id: 7, name: 'Nathan', avatar: 'assets/images/Nathan.jpg');
+    User(chatUserId: 7, name: 'Nathan', avatar: 'assets/images/Nathan.jpg');
 
 final User stanley =
-    User(id: 8, name: 'Stanley', avatar: 'assets/images/Stanley.jpg');
+    User(chatUserId: 8, name: 'Stanley', avatar: 'assets/images/Stanley.jpg');
 
 final User virgil =
-    User(id: 9, name: 'Virgil', avatar: 'assets/images/Virgil.jpg');
+    User(chatUserId: 9, name: 'Virgil', avatar: 'assets/images/Virgil.jpg');

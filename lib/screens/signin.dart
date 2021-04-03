@@ -1,11 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:piperchatapp/models/user_model.dart';
 import 'package:piperchatapp/screens/home_page.dart';
 import 'package:piperchatapp/screens/signup.dart';
+import 'package:piperchatapp/utils/RSA.dart';
+import 'package:piperchatapp/utils/utils.dart';
 import 'package:piperchatapp/widgets/custom_shape.dart';
 import 'package:piperchatapp/widgets/customappbar.dart';
 import 'package:piperchatapp/widgets/responsive_ui.dart';
 import 'package:piperchatapp/widgets/textformfield.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
+import 'package:pointycastle/api.dart' as crypto;
+import 'package:pem/pem.dart';
 
 class SignInPage extends StatelessWidget {
   @override
@@ -210,12 +218,29 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
+  _storeUser() async {
+    RSA rsa = new RSA();
+    rsa.futureKeyPair = rsa.getKeyPair();
+    rsa.keyPair = await rsa.futureKeyPair;
+    String publicKey = RSA.publicKeyString(rsa.keyPair.publicKey);
+    String privateKey = RSA.privateKeyString(rsa.keyPair.privateKey);
+    String name = emailController.text;
+    String avatar = "assets/images/Deanna.jpg";
+    User user = new User(chatUserId: int.parse(passwordController.text), name: name,email: 'abc@gmail.com', avatar: avatar,password: 'abc',publicKey: publicKey);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(Utils.CURRENT_USER, jsonEncode(user.toJosn()));
+    prefs.setString(Utils.PRIVATE_KEY, privateKey);
+ 
+  }
+
+  
   Widget button() {
     return RaisedButton(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-      onPressed: () {
-
+      onPressed: ()async {
+          
+          await _storeUser();
           Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => HomePage()),
