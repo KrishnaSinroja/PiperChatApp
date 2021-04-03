@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:piperchatapp/app_theme.dart';
 class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -12,10 +12,10 @@ class CustomAppBar extends StatelessWidget {
         padding: EdgeInsets.only(left: 15, top: 25),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors:[Colors.orange[200], Colors.pinkAccent]
+              colors:[MyTheme.kPrimaryColor, MyTheme.kAccentColor]
           ),
         ),
-        child: Row(
+        /*child: Row(
           children: <Widget>[
             IconButton(
                 icon: Icon(Icons.arrow_back,),
@@ -24,7 +24,7 @@ class CustomAppBar extends StatelessWidget {
                   Navigator.of(context).pop();
             })
           ],
-        ),
+        ),*/
       ),
     );
   }

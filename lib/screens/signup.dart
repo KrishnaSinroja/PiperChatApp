@@ -5,7 +5,7 @@ import 'package:piperchatapp/widgets/custom_shape.dart';
 import 'package:piperchatapp/widgets/customappbar.dart';
 import 'package:piperchatapp/widgets/responsive_ui.dart';
 import 'package:piperchatapp/widgets/textformfield.dart';
-
+import 'package:piperchatapp/app_theme.dart';
 
 
 class SignUpScreen extends StatefulWidget {
@@ -41,8 +41,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: <Widget>[
                 Opacity(opacity: 0.88,child: CustomAppBar()),
                 clipShape(),
+                welcomeTextRow(),
                 form(),
-                acceptTermsTextRow(),
                 SizedBox(height: _height/35,),
                 button(),
                 signInTextRow(),
@@ -65,7 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               height: _large? _height/8 : (_medium? _height/7 : _height/6.5),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.orange[200], Colors.pinkAccent],
+                  colors: [MyTheme.kPrimaryColor, MyTheme.kAccentColor],
                 ),
               ),
             ),
@@ -79,13 +79,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               height: _large? _height/12 : (_medium? _height/11 : _height/10),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.orange[200], Colors.pinkAccent],
+                  colors: [MyTheme.kPrimaryColor, MyTheme.kAccentColor],
                 ),
               ),
             ),
           ),
         ),
-        Container(
+        /*Container(
           height: _height / 5.5,
           alignment: Alignment.center,
           decoration: BoxDecoration(
@@ -98,14 +98,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ],
             color: Colors.white,
             shape: BoxShape.circle,
+
           ),
-          child: GestureDetector(
+           /*GestureDetector(
               onTap: (){
                 print('Adding photo');
               },
 
-              child: Icon(Icons.add_a_photo, size: _large? 40: (_medium? 33: 31),color: Colors.orange[200],)),
-        ),
+              child: Icon(Icons.add_a_photo, size: _large? 40: (_medium? 33: 31),color: Colors.orange[200],)),*/
+              /*child:ClipOval(
+                child: Image.asset(
+                  'assets/images/user_avatar.png '), 
+              )*/
+
+            child: Image.asset('assets/images/user_avatar.png'),
+        ),*/
 //        Positioned(
 //          top: _height/8,
 //          left: _width/1.75,
@@ -128,6 +135,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  Widget welcomeTextRow() {
+    return Container(
+      margin: EdgeInsets.only(left: _width / 20, top: _height / 100),
+      child: Row(
+        children: <Widget>[
+          Text(
+            "Register",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: _large? 60 : (_medium? 50 : 40),
+              color: MyTheme.kPrimaryColor
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget form() {
     return Container(
       margin: EdgeInsets.only(
@@ -137,13 +162,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Form(
         child: Column(
           children: <Widget>[
-            firstNameTextFormField(),
+            nameTextFormField(),
             SizedBox(height: _height / 60.0),
-            lastNameTextFormField(),
-            SizedBox(height: _height/ 60.0),
             emailTextFormField(),
-            SizedBox(height: _height / 60.0),
-            phoneTextFormField(),
             SizedBox(height: _height / 60.0),
             passwordTextFormField(),
           ],
@@ -152,22 +173,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget firstNameTextFormField() {
+  Widget nameTextFormField() {
     return CustomTextField(
       keyboardType: TextInputType.text,
       icon: Icons.person,
-      hint: "First Name",
+      hint: "Name",
     );
   }
 
-  Widget lastNameTextFormField() {
-    return CustomTextField(
-      keyboardType: TextInputType.text,
-      icon: Icons.person,
-      hint: "Last Name",
-    );
-  }
-
+  
   Widget emailTextFormField() {
     return CustomTextField(
       keyboardType: TextInputType.emailAddress,
@@ -176,14 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget phoneTextFormField() {
-    return CustomTextField(
-      keyboardType: TextInputType.number,
-      icon: Icons.phone,
-      hint: "Mobile Number",
-    );
-  }
-
+  
   Widget passwordTextFormField() {
     return CustomTextField(
       keyboardType: TextInputType.text,
@@ -193,50 +200,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget acceptTermsTextRow() {
-    return Container(
-      margin: EdgeInsets.only(top: _height / 100.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Checkbox(
-              activeColor: Colors.orange[200],
-              value: checkBoxValue,
-              onChanged: (bool newValue) {
-                setState(() {
-                  checkBoxValue = newValue;
-                });
-              }),
-          Text(
-            "I accept all terms and conditions",
-            style: TextStyle(fontWeight: FontWeight.w400, fontSize: _large? 12: (_medium? 11: 10)),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget button() {
     return RaisedButton(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70.0)),
       onPressed: () {
         print("Routing to your account");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SignInPage()));
       },
       textColor: Colors.white,
       padding: EdgeInsets.all(0.0),
       child: Container(
         alignment: Alignment.center,
 //        height: _height / 20,
-        width:_large? _width/4 : (_medium? _width/3.75: _width/3.5),
+        width:_large? _width/2 : (_medium? _width/2: _width/2),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          borderRadius: BorderRadius.all(Radius.circular(30.0)),
           gradient: LinearGradient(
-            colors: <Color>[Colors.orange[200], Colors.pinkAccent],
+            colors: <Color>[MyTheme.kPrimaryColor, MyTheme.kAccentColor],
           ),
         ),
         padding: const EdgeInsets.all(12.0),
-        child: Text('SIGN UP', style: TextStyle(fontSize: _large? 14: (_medium? 12: 10)),),
+        child: Text('SIGN UP', style: TextStyle(fontSize: _large? 18: (_medium? 18: 16)),),
       ),
     );
   }
@@ -249,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: <Widget>[
           Text(
             "Already have an account?",
-            style: TextStyle(fontWeight: FontWeight.w400),
+            style: TextStyle(fontWeight: FontWeight.w400,fontSize: 17),
           ),
           SizedBox(
             width: 5,
@@ -265,7 +252,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Text(
               "Sign in",
               style: TextStyle(
-                  fontWeight: FontWeight.w800, color: Colors.orange[200], fontSize: 19),
+                  fontWeight: FontWeight.w800, color: Colors.orange[200], fontSize: 17),
             ),
           )
         ],
